@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "onefile-organizer"
-version = "0.1.0"
+version = "0.1.1"
 description = "Automatically organize your messy folders with smart file sorting"
 readme = "README.md"
 authors = [
-    { name = "Aditya Ranjan", email = "adityaranjan@email.com" },
+    { name = "Aditya Ranjan", email = "aditya87331@gmail.com" },
 ]
 license = {text = "MIT"}
 classifiers = [
