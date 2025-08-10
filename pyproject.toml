@@ -3,7 +3,7 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "onefile"
+name = "onefile-organizer"
 version = "0.1.0"
 description = "Automatically organize your messy folders with smart file sorting"
 readme = "README.md"
@@ -21,9 +21,10 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Topic :: Desktop Environment :: File Tools",
+    "Topic :: Desktop Environment",
     "Topic :: System :: Filesystems",
     "Topic :: Utilities",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 keywords = ["file", "organization", "organizer", "automation", "productivity"]
 dependencies = [
