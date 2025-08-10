@@ -6,9 +6,7 @@
 [![PyPI](https://img.shields.io/pypi/v/onefile-organizer)](https://pypi.org/project/onefile-organizer/)
 [![GitHub stars](https://img.shields.io/github/stars/Aditya-Ranjan1234/onefile-organizer?style=social)](https://github.com/Aditya-Ranjan1234/onefile-organizer)
 
-OneFile is a powerful, configurable file organization tool that automatically sorts your files into appropriate folders based on their types, names, and other attributes. It's designed to help you keep your digital life organized with minimal effort.
-
-OneFile is a powerful, configurable file organization tool that automatically sorts your files into appropriate folders based on their types, names, and other attributes. It can run as a one-time organizer or as a background daemon that watches for new files.
+OneFile is a powerful, configurable file organization tool that automatically sorts your files into appropriate folders based on their types, names, and other attributes. It's designed to help you keep your digital life organized with minimal effort. It can run as a one-time organizer or as a background daemon that watches for new files.
 
 ## ✨ Features
 
@@ -23,53 +21,37 @@ OneFile is a powerful, configurable file organization tool that automatically so
 - **Progress Tracking**: Real-time progress updates for large operations
 - **Logging**: Comprehensive logging for troubleshooting and auditing
 
-## 📦 Installation
+## 🚀 Quick Install
 
 ### Prerequisites
 
 - Python 3.7 or higher
 - pip (Python package manager)
 
-### Install from PyPI (Recommended)
+### From PyPI (Recommended)
 
 ```bash
 pip install onefile-organizer
 ```
 
-### Install from Source (Development)
+### System Dependencies (for MIME type detection)
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Aditya-Ranjan1234/onefile-organizer.git
-   cd onefile
-   ```
+| OS | Command |
+|----|---------|
+| **Windows** | No additional dependencies needed |
+| **Ubuntu/Debian** | `sudo apt-get install libmagic1` |
+| **Fedora** | `sudo dnf install file-devel` |
+| **macOS (Homebrew)** | `brew install libmagic` |
 
-2. Install the package in development mode with all dependencies:
-   ```bash
-   pip install -e ".[dev]"
-   ```
+### From Source (Development)
 
-   Or for production use:
-   ```bash
-   pip install -e .
-   ```
-   
-### System Dependencies
-
-For MIME type detection, you'll need:
-
-- **Windows**: No additional dependencies needed (uses `python-magic-bin`)
-- **macOS/Linux**: Install `libmagic` using your package manager:
-  ```bash
-  # Ubuntu/Debian
-  sudo apt-get install libmagic1
-  
-  # Fedora
-  sudo dnf install file-devel
-  
-  # macOS (using Homebrew)
-  brew install libmagic
-  ```
+```bash
+git clone https://github.com/Aditya-Ranjan1234/onefile-organizer.git
+cd onefile
+pip install -e ".[dev]"  # For development with all dependencies
+# or
+pip install -e .  # For production use
+```
 
 ## 🚀 Quick Start
 
