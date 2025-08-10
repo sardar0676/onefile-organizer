@@ -45,10 +45,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Aditya-Ranjan1234/onefile"
-Documentation = "https://github.com/Aditya-Ranjan1234/onefile#readme"
-Issues = "https://github.com/Aditya-Ranjan1234/onefile/issues"
-Source = "https://github.com/Aditya-Ranjan1234/onefile"
+Homepage = "https://github.com/Aditya-Ranjan1234/onefile-organizer"
+Documentation = "https://github.com/Aditya-Ranjan1234/onefile-organizer#readme"
+Issues = "https://github.com/Aditya-Ranjan1234/onefile-organizer/issues"
+Source = "https://github.com/Aditya-Ranjan1234/onefile-organizer"
 
 [project.scripts]
 onefile = "onefile.cli:main"

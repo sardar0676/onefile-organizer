@@ -4,7 +4,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue)](https://www.python.org/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![PyPI](https://img.shields.io/pypi/v/onefile-organizer)](https://pypi.org/project/onefile-organizer/)
-[![GitHub stars](https://img.shields.io/github/stars/Aditya-Ranjan1234/onefile?style=social)](https://github.com/Aditya-Ranjan1234/onefile)
+[![GitHub stars](https://img.shields.io/github/stars/Aditya-Ranjan1234/onefile-organizer?style=social)](https://github.com/Aditya-Ranjan1234/onefile-organizer)
 
 OneFile is a powerful, configurable file organization tool that automatically sorts your files into appropriate folders based on their types, names, and other attributes. It's designed to help you keep your digital life organized with minimal effort.
 
@@ -40,7 +40,7 @@ pip install onefile-organizer
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Aditya-Ranjan1234/onefile.git
+   git clone https://github.com/Aditya-Ranjan1234/onefile-organizer.git
    cd onefile
    ```
 
@@ -291,7 +291,7 @@ $ onefile --src ~/Downloads --watch --interval 60
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Aditya-Ranjan1234/onefile.git
+   git clone https://github.com/Aditya-Ranjan1234/onefile-organizer.git
    cd onefile
    ```
 
@@ -360,7 +360,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Aditya Ranjan - [GitHub](https://github.com/Aditya-Ranjan1234) - [Email](mailto:adityaranjan@email.com)
 
-Project Link: [https://github.com/Aditya-Ranjan1234/onefile](https://github.com/Aditya-Ranjan1234/onefile)
+Project Link: [https://github.com/Aditya-Ranjan1234/onefile-organizer](https://github.com/Aditya-Ranjan1234/onefile-organizer)
 
 ## 🙏 Acknowledgments
 
