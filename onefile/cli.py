@@ -11,6 +11,7 @@ from typing import Optional, Dict, Any, List
 
 from .core import FileOrganizer, organize_folder
 from .watcher import run_daemon, FileWatcher
+from .utils import parse_size
 
 # Set up logging
 logging.basicConfig(
@@ -71,12 +72,12 @@ class OneFileCLI:
         filter_group = parser.add_argument_group('Filter options')
         filter_group.add_argument(
             '--min-size',
-            type=self._parse_size,
+            type=parse_size,
             help='Minimum file size (e.g., 1K, 1M, 1G)'
         )
         filter_group.add_argument(
             '--max-size',
-            type=self._parse_size,
+            type=parse_size,
             help='Maximum file size (e.g., 1K, 1M, 1G)'
         )
         filter_group.add_argument(
@@ -138,17 +139,7 @@ class OneFileCLI:
         
         return parser
     
-    def _parse_size(self, size_str: str) -> int:
-        """Parse size string with units (e.g., 1K, 2M, 3G) to bytes."""
-        size_str = size_str.upper()
-        if size_str.endswith('K'):
-            return int(size_str[:-1]) * 1024
-        elif size_str.endswith('M'):
-            return int(size_str[:-1]) * 1024 * 1024
-        elif size_str.endswith('G'):
-            return int(size_str[:-1]) * 1024 * 1024 * 1024
-        else:
-            return int(size_str)
+   
     
     def _load_config(self, config_path: str) -> Dict[str, Any]:
         """Load configuration from a JSON file."""

@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple, Union, Callable, Any
 from datetime import datetime, timedelta
 import mimetypes
+from .utils import parse_size
 
 from . import rules
 from .utils import parse_size
@@ -96,8 +97,8 @@ class FileOrganizer:
         self.source_dir = Path(source_dir).expanduser().resolve()
         self.dry_run = dry_run
         self.custom_rules = custom_rules or {}
-        self.min_size = self._parse_size(min_size) if isinstance(min_size, str) else min_size
-        self.max_size = self._parse_size(max_size) if isinstance(max_size, str) else max_size
+        self.min_size = parse_size(min_size) if isinstance(min_size, str) else min_size
+        self.max_size = parse_size(max_size) if isinstance(max_size, str) else max_size
         self.min_age_days = min_age_days
         self.max_age_days = max_age_days
         self.ignore_hidden = ignore_hidden
@@ -133,21 +134,7 @@ class FileOrganizer:
         if self.dry_run:
             logger.info("DRY RUN MODE: No files will be moved")
     
-    def _parse_size(self, size_str: str) -> int:
-        """Parse size string with units (e.g., 1K, 2M, 3G) to bytes."""
-        if not size_str:
-            return 0
-            
-        size_str = size_str.upper().strip()
-        if size_str.endswith('K'):
-            return int(size_str[:-1]) * 1024
-        elif size_str.endswith('M'):
-            return int(size_str[:-1]) * 1024 * 1024
-        elif size_str.endswith('G'):
-            return int(size_str[:-1]) * 1024 * 1024 * 1024
-        else:
-            # Assume bytes if no unit specified
-            return int(size_str)
+   
     
     def _get_file_hash(self, file_path: Path, block_size: int = 65536) -> str:
         """Calculate MD5 hash of a file."""
