@@ -322,10 +322,7 @@ class FileOrganizer:
                     logger.debug(f"Skipping {file_path}: Age ({days_old} days) > max_age_days ({self.max_age_days} days)")
                     return True
                     
-            # Check for duplicates if enabled
-            if self.detect_duplicates and self._is_duplicate(file_path):
-                return self._handle_duplicate(file_path)
-                
+           
             return False
             
         except (OSError, PermissionError) as e:
@@ -333,7 +330,13 @@ class FileOrganizer:
             self.errors += 1
             return True
                 
-        return False
+    def _resolve_duplicate_if_needed(self, file_path: Path) -> bool:
+        if not self.detect_duplicates:
+          return False
+        if not self._is_duplicate(file_path):
+          return False
+        return self._handle_duplicate(file_path)
+        
     
     def get_destination_folder(self, file_path: Path) -> str:
         """Determine the destination folder for a file."""
@@ -370,6 +373,10 @@ class FileOrganizer:
         self.files_processed += 1
         
         try:
+            if self._resolve_duplicate_if_needed(file_path):
+                self.files_skipped += 1
+                logger.debug(f"Duplicate handled, not moving: {file_path}")
+                return False
             if self.should_skip_file(file_path):
                 self.files_skipped += 1
                 logger.debug(f"Skipping file: {file_path}")
