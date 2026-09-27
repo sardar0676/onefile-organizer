@@ -191,7 +191,7 @@ class FileOrganizer:
                 try:
                     file_path.unlink()
                     return True
-                except Exception as e:
+                except (OSError, PermissionError) as e:
                     logger.error(f"Error deleting duplicate file {file_path}: {e}")
                     return False
                     
@@ -411,7 +411,7 @@ class FileOrganizer:
                     shutil.move(str(file_path), str(dest_path))
                     self.files_moved += 1
                     return True
-                except Exception as e:
+                except (OSError, shutil.Error) as e:
                     logger.error(f"Error moving file {file_path}: {e}")
                     self.errors += 1
                     return False

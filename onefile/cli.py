@@ -144,9 +144,9 @@ class OneFileCLI:
     def _load_config(self, config_path: str) -> Dict[str, Any]:
         """Load configuration from a JSON file."""
         try:
-            with open(config_path, 'r') as f:
+            with open(config_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
-        except Exception as e:
+        except (OSError, json.JSONDecodeError) as e:
             logger.error(f"Error loading config file: {e}")
             return {}
     
