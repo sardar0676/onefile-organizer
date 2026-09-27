@@ -15,25 +15,20 @@ from typing import Dict, List, Optional, Set, Tuple, Union, Callable, Any
 from datetime import datetime, timedelta
 import mimetypes
 
+from . import rules
+from .utils import parse_size
+
+# Set up logging first, so it is already available to the optional-import
+# fallback below (previously `logger` was used before it was assigned here).
+logging.basicConfig(...)
+logger = logging.getLogger(__name__)
+
 try:
-    import magic  # python-magic-bin on Windows, python-magic on other platforms
+    import magic
     HAS_MAGIC = True
 except ImportError:
     HAS_MAGIC = False
     logger.warning("python-magic not found. Using basic MIME type detection.")
-
-from . import rules
-
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler('onefile.log')
-    ]
-)
-logger = logging.getLogger(__name__)
 
 # Initialize MIME type detection
 if HAS_MAGIC:
