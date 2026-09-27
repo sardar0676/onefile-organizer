@@ -15,7 +15,7 @@ from typing import Dict, List, Optional, Set, Tuple, Union, Callable, Any
 from datetime import datetime, timedelta
 import mimetypes
 from .utils import parse_size
-
+from enum import Enum
 from . import rules
 from .utils import parse_size
 
@@ -46,6 +46,16 @@ else:
     mimetypes.add_type('application/x-msi', '.msi')
     mimetypes.add_type('application/x-iso9660-image', '.iso')
 
+class DuplicateAction(str, Enum):
+    RENAME = 'rename'
+    SKIP = 'skip'
+    OVERWRITE = 'overwrite'
+    DELETE = 'delete'
+
+class ConflictResolution(str, Enum):
+    RENAME = 'rename'
+    OVERWRITE = 'overwrite'
+    SKIP = 'skip'
 class FileOrganizer:
     """
     Main class for organizing files with advanced features.
@@ -105,8 +115,6 @@ class FileOrganizer:
         self.ignore_system = ignore_system
         self.use_modified_time = use_modified_time
         self.detect_duplicates = detect_duplicates
-        self.duplicate_action = duplicate_action.lower()
-        self.conflict_resolution = conflict_resolution.lower()
         self.max_filename_length = max_filename_length
         self.preserve_original = preserve_original
         self.callback = callback
@@ -125,11 +133,14 @@ class FileOrganizer:
             raise FileNotFoundError(f"Source directory does not exist: {self.source_dir}")
         
         # Validate actions
-        if self.duplicate_action not in ('rename', 'skip', 'overwrite', 'delete'):
-            raise ValueError(f"Invalid duplicate_action: {self.duplicate_action}")
-        if self.conflict_resolution not in ('rename', 'overwrite', 'skip'):
-            raise ValueError(f"Invalid conflict_resolution: {self.conflict_resolution}")
-        
+        try:
+            self.duplicate_action = DuplicateAction(duplicate_action.lower())
+        except ValueError as exc:
+            raise ValueError(f"Invalid duplicate_action: {duplicate_action}") from exc
+        try:
+            self.conflict_resolution = ConflictResolution(conflict_resolution.lower())
+        except ValueError as exc:
+            raise ValueError(f"Invalid conflict_resolution: {conflict_resolution}") from exc
         logger.info(f"Initialized organizer for: {self.source_dir}")
         if self.dry_run:
             logger.info("DRY RUN MODE: No files will be moved")
@@ -181,11 +192,11 @@ class FileOrganizer:
             
         original_file = self.duplicate_hashes[file_hash][0]
         
-        if self.duplicate_action == 'skip':
+        if self.duplicate_action == DuplicateAction.SKIP:
             logger.info(f"Skipping duplicate: {file_path}")
             return True
             
-        elif self.duplicate_action == 'delete':
+        elif self.duplicate_action == DuplicateAction.DELETE:
             logger.info(f"Deleting duplicate: {file_path}")
             if not self.dry_run:
                 try:
@@ -207,11 +218,11 @@ class FileOrganizer:
             return file_path
             
         # If overwrite is enabled and the file exists, return the same path
-        if self.conflict_resolution == 'overwrite':
+        if self.conflict_resolution == ConflictResolution.OVERWRITE:
             return file_path
             
         # If skip is enabled and the file exists, return None to indicate skipping
-        if self.conflict_resolution == 'skip':
+        if self.conflict_resolution == ConflictResolution.SKIP:
             return None
             
         # Default: rename the file
