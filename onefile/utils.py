@@ -1,3 +1,5 @@
+from typing import Optional
+
 _SIZE_MULTIPLIERS = {'K': 1024, 'M': 1024 ** 2, 'G': 1024 ** 3}
 
 def parse_size(size_str: Optional[str]) -> int:

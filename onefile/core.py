@@ -14,14 +14,13 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple, Union, Callable, Any
 from datetime import datetime, timedelta
 import mimetypes
-from .utils import parse_size
 from enum import Enum
 from . import rules
 from .utils import parse_size
 
 # Set up logging first, so it is already available to the optional-import
-# fallback below (previously `logger` was used before it was assigned here).
-logging.basicConfig(...)
+# fallback below
+logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 try:
@@ -31,11 +30,17 @@ except ImportError:
     HAS_MAGIC = False
     logger.warning("python-magic not found. Using basic MIME type detection.")
 
-# Initialize MIME type detection
+# Initialize MIME type detection safely
 if HAS_MAGIC:
-    mime = magic.Magic(mime=True)
-else:
-    # Fallback to built-in mimetypes if magic is not available
+    try:
+        mime = magic.Magic(mime=True)
+    except TypeError:
+        # Handles the case where the installed 'magic' library is not 'python-magic'
+        HAS_MAGIC = False
+        logger.warning("Incompatible magic module found. Falling back to basic MIME type detection.")
+
+if not HAS_MAGIC:
+    # Fallback to built-in mimetypes if magic is not available or incompatible
     mime = None
     # Ensure mimetypes has our custom types
     mimetypes.add_type('application/x-rar-compressed', '.cbr')
@@ -56,6 +61,7 @@ class ConflictResolution(str, Enum):
     RENAME = 'rename'
     OVERWRITE = 'overwrite'
     SKIP = 'skip'
+
 class FileOrganizer:
     """
     Main class for organizing files with advanced features.
@@ -84,26 +90,7 @@ class FileOrganizer:
         preserve_original: bool = False,  # Keep original files (copy instead of move)
         callback: Optional[Callable[[Dict[str, Any]], None]] = None,  # Callback for progress updates
     ):
-        """Initialize the file organizer with advanced options.
-        
-        Args:
-            source_dir: Directory to organize
-            dry_run: If True, simulate file operations without making changes
-            custom_rules: Custom file organization rules
-            min_size: Minimum file size (e.g., '1K', '10M', '1G' or bytes)
-            max_size: Maximum file size
-            min_age_days: Minimum file age in days
-            max_age_days: Maximum file age in days
-            ignore_hidden: Skip hidden files/directories
-            ignore_system: Skip system files (Windows only)
-            use_modified_time: Use modification time instead of creation time for age checks
-            detect_duplicates: Enable duplicate file detection
-            duplicate_action: Action for duplicate files ('rename', 'skip', 'overwrite', 'delete')
-            conflict_resolution: How to handle filename conflicts ('rename', 'overwrite', 'skip')
-            max_filename_length: Maximum allowed filename length (0 for no limit)
-            preserve_original: Keep original files (copy instead of move)
-            callback: Callback function for progress updates
-        """
+        """Initialize the file organizer with advanced options."""
         self.source_dir = Path(source_dir).expanduser().resolve()
         self.dry_run = dry_run
         self.custom_rules = custom_rules or {}
@@ -144,8 +131,6 @@ class FileOrganizer:
         logger.info(f"Initialized organizer for: {self.source_dir}")
         if self.dry_run:
             logger.info("DRY RUN MODE: No files will be moved")
-    
-   
     
     def _get_file_hash(self, file_path: Path, block_size: int = 65536) -> str:
         """Calculate MD5 hash of a file."""
@@ -190,8 +175,6 @@ class FileOrganizer:
         if not file_hash or file_hash not in self.duplicate_hashes:
             return False
             
-        original_file = self.duplicate_hashes[file_hash][0]
-        
         if self.duplicate_action == DuplicateAction.SKIP:
             logger.info(f"Skipping duplicate: {file_path}")
             return True
@@ -206,7 +189,7 @@ class FileOrganizer:
                     logger.error(f"Error deleting duplicate file {file_path}: {e}")
                     return False
                     
-        elif self.duplicate_action == 'overwrite':
+        elif self.duplicate_action == DuplicateAction.OVERWRITE:
             # This will be handled in the file move/copy operation
             return False
             
@@ -287,14 +270,7 @@ class FileOrganizer:
                 logger.error(f"Error in progress callback: {e}")
     
     def should_skip_file(self, file_path: Path) -> bool:
-        """Determine if a file should be skipped based on filters.
-        
-        Args:
-            file_path: Path to the file to check
-            
-        Returns:
-            bool: True if the file should be skipped, False otherwise
-        """
+        """Determine if a file should be skipped based on filters."""
         try:
             # Skip directories and non-existent files
             if not file_path.is_file():
@@ -333,7 +309,6 @@ class FileOrganizer:
                     logger.debug(f"Skipping {file_path}: Age ({days_old} days) > max_age_days ({self.max_age_days} days)")
                     return True
                     
-           
             return False
             
         except (OSError, PermissionError) as e:
@@ -348,7 +323,6 @@ class FileOrganizer:
           return False
         return self._handle_duplicate(file_path)
         
-    
     def get_destination_folder(self, file_path: Path) -> str:
         """Determine the destination folder for a file."""
         # First check filename patterns
@@ -477,14 +451,6 @@ def organize_folder(
 ) -> Dict[str, int]:
     """
     Convenience function to organize a folder with default settings.
-    
-    Args:
-        source_dir: Directory to organize
-        dry_run: If True, don't actually move any files
-        **kwargs: Additional arguments to pass to FileOrganizer
-        
-    Returns:
-        Dict with statistics about the operation
     """
     organizer = FileOrganizer(source_dir=source_dir, dry_run=dry_run, **kwargs)
     return organizer.organize()

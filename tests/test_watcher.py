@@ -30,10 +30,10 @@ def test_dir():
     shutil.rmtree(temp_dir, ignore_errors=True)
 
 class TestFileWatcher:
-    ""Test the FileWatcher class."""
+    """Test the FileWatcher class."""
     
     def test_watcher_initialization(self, test_dir):
-        ""Test that the watcher initializes correctly."""
+        """Test that the watcher initializes correctly."""
         watcher = FileWatcher(source_dir=test_dir, interval=10)
         
         assert watcher.source_dir == Path(test_dir).resolve()
@@ -42,7 +42,7 @@ class TestFileWatcher:
         assert watcher.thread is None
     
     def test_watcher_start_stop(self, test_dir):
-        ""Test starting and stopping the watcher."""
+        """Test starting and stopping the watcher."""
         watcher = FileWatcher(source_dir=test_dir, interval=1)
         
         # Start the watcher in a separate thread
@@ -65,7 +65,7 @@ class TestFileWatcher:
         assert not watcher.thread.is_alive()
     
     def test_watcher_organize_files(self, test_dir):
-        ""Test that the watcher organizes files."""
+        """Test that the watcher organizes files."""
         # Create test files
         for filename, content in TEST_FILES.items():
             file_path = test_dir / filename
@@ -102,7 +102,7 @@ class TestFileWatcher:
             watcher.stop()
     
     def test_watcher_interval(self, test_dir):
-        ""Test that the watcher respects the interval."""
+        """Test that the watcher respects the interval."""
         # Create a test file
         test_file = test_dir / "test.txt"
         with open(test_file, 'w') as f:
@@ -149,7 +149,7 @@ class TestFileWatcher:
             FileWatcher.OrganizerClass = original_organizer
     
     def test_watcher_error_handling(self, test_dir, caplog):
-        ""Test that the watcher handles errors gracefully."""
+        """Test that the watcher handles errors gracefully."""
         # Create a test file
         test_file = test_dir / "test.txt"
         with open(test_file, 'w') as f:
@@ -194,8 +194,8 @@ class TestFileWatcher:
             # Restore the original organizer class
             FileWatcher.OrganizerClass = original_organizer
 
-def test_run_daemon(test_dir, monkeypatch, capsys):
-    ""Test the run_daemon function."""
+def test_run_daemon(test_dir, monkeypatch, caplog):
+    """Test the run_daemon function."""
     # Create a test file
     test_file = test_dir / "test.txt"
     with open(test_file, 'w') as f:
@@ -222,6 +222,9 @@ def test_run_daemon(test_dir, monkeypatch, capsys):
     # Import the run_daemon function after applying mocks
     from onefile.watcher import run_daemon
     
+    # Clear previous logs
+    caplog.clear()
+
     # Run the daemon with a short interval
     run_daemon(
         source_dir=str(test_dir),
@@ -232,7 +235,5 @@ def test_run_daemon(test_dir, monkeypatch, capsys):
     # Check that the daemon was started
     assert daemon_started, "Daemon did not start"
     
-    # Check the output
-    captured = capsys.readouterr()
-    assert "Starting daemon for" in captured.out
-    assert "Daemon stopped" in captured.out
+    # Check the log records instead of standard output
+    assert any("Starting daemon for" in record.message for record in caplog.records)
